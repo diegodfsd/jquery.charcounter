@@ -12,21 +12,23 @@
 	 * usage: $("#myTextArea").charCounter(max, settings);
 	 */
 	
-	$.fn.charCounter = function (max, settings) {
-		max = max || 100;
+	$.fn.charCounter = function (settings) {
+        var maxLengthDefault = 100;
 		settings = $.extend({
 			container: "<span></span>",
 			classname: "charcounter",
-			format: "(%1 characters remaining)",
+			format: "(Restam %1 caracteres)",
 			pulse: true,
 			delay: 0
 		}, settings);
 		var p, timeout;
 		
 		function count(el, container) {
-			el = $(el);
-			if (el.val().length > max) {
-			    el.val(el.val().substring(0, max));
+            var $el = $(el),
+                max = $el.attr("maxlength") || maxLengthDefault;
+
+			if ($el.val().length > max) {
+                $el.val($el.val().substring(0, max));
 			    if (settings.pulse && !p) {
 			    	pulse(container, true);
 			    };
@@ -36,10 +38,10 @@
 					window.clearTimeout(timeout);
 				}
 				timeout = window.setTimeout(function () {
-					container.html(settings.format.replace(/%1/, (max - el.val().length)));
+					container.html(settings.format.replace(/%1/, (max - $el.val().length)));
 				}, settings.delay);
 			} else {
-				container.html(settings.format.replace(/%1/, (max - el.val().length)));
+				container.html(settings.format.replace(/%1/, (max - $el.val().length)));
 			}
 		};
 		
